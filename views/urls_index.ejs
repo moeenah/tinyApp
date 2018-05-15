@@ -1,0 +1,12 @@
+<html lang="en">
+<head>
+  <% include ./partials/_header.ejs %>
+</head>
+<body>
+  <h2>Example</h2>
+  <% Object.keys(urls).forEach(function(keys) { %>
+    <li><%= urls[keys] %></li>
+    <a href = "Enter_Path_Here">Shorten URL</a>
+  <% }); %>
+</body>
+</html>
