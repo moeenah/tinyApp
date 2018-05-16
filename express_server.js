@@ -1,4 +1,5 @@
 let express = require("express");
+let cookieParser = require('cookie-parser');
 let app = express();
 let PORT = process.env.PORT || 8080; // default port 8080
 
@@ -73,6 +74,15 @@ app.post("/urls/:id/edit", (req, res) => {
     // debug statement to see POST parameters
   //console.log(req.body.longURL);
   urlDatabase[req.params.id] = req.body.longURL;
+  res.redirect(`/urls`);
+
+});
+
+app.post("/login", (req, res) => {
+    // debug statement to see POST parameters
+  //console.log(req.body.longURL);
+  console.log(req.body.username);
+  res.cookie(req.body.username);
   res.redirect(`/urls`);
 
 });
