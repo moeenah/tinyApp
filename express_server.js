@@ -91,6 +91,16 @@ app.post("/login", (req, res) => {
 
 });
 
+app.post("/logout", (req, res) => {
+    // debug statement to see POST parameters
+  //console.log(req.body.longURL);
+
+  res.clearCookie('username');
+  console.log(req.body);
+  res.redirect(`/urls`);
+
+});
+
 //listens to specified port
 app.listen(PORT, () => {
   console.log(`TinyApp listening on port ${PORT}!`);
