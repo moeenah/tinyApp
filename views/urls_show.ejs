@@ -5,6 +5,11 @@
 <body>
   <h2>Your Tiny URL</h2>
     <p>Original URL: <%= long %></p>
+    <BLOCKQUOTE><form action="/urls/<%= short %>/edit" method="POST">
+      <label for="longURL">Edit URL:</label>
+      <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 300px">
+      <input type="submit" value="Submit">
+    </form></BLOCKQUOTE>
     <p>Shortened URL: <a href = <%=long%>>tinyApp.ca/<%= short %></a></p>
       <a href = '/urls/'><input id="Home" type="button" value="Home" onclick="/urls" /></a>
 </body>

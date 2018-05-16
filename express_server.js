@@ -58,13 +58,28 @@ app.post("/urls", (req, res) => {
   //urlDatabase['h'] = req.body;
   let random = generateRandomString();
   urlDatabase[random] = req.body.longURL;
-  console.log(urlDatabase);
-  res.redirect(`/urls/${random}`);
+  //console.log(urlDatabase);
+  res.redirect(`/urls`);
+});
+
+app.post("/urls/:id/delete", (req, res) => {
+    // debug statement to see POST parameters
+  //console.log(req.params.id);
+  delete urlDatabase[req.params.id];
+  res.redirect('/urls');
+});
+
+app.post("/urls/:id/edit", (req, res) => {
+    // debug statement to see POST parameters
+  //console.log(req.body.longURL);
+  urlDatabase[req.params.id] = req.body.longURL;
+  res.redirect(`/urls`);
+
 });
 
 //listens to specified port
 app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
+  console.log(`TinyApp listening on port ${PORT}!`);
 });
 
 

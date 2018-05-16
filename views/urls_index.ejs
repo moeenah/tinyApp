@@ -1,4 +1,5 @@
 <html lang="en">
+
 <head>
   <% include ./partials/_header.ejs %>
 </head>
@@ -6,7 +7,14 @@
   <h2>Your Tiny URLs:</h2>
 
   <% Object.keys(urls).forEach(function(keys) { %>
-    <BLOCKQUOTE><p><a href = <%= urls[keys]%>>tinyApp.ca/<%= keys %></a>&#32;&#40;<%= urls[keys] %>&#41;&#32;<a href = '/urls/new'><input id="Edit URL" type="button" value="Edit" onclick="/urls/new" /></a><a href = '/urls/new'><input id="Delete URL" type="button" value="Delete" onclick="/urls/new" /></a></p></BLOCKQUOTE>
+    <p>
+      <a href = <%= urls[keys]%>>tinyApp.ca/<%= keys %></a>&#32;&#40;<%= urls[keys] %>&#41;
+
+      <a href = '/urls/<%= keys %>'><input id="Edit URL" type="submit" value="Edit"/></a>
+
+      <form  method="POST" action="/urls/<%= keys %>/delete"><input id="Delete URL" type="submit" value="Delete"/></form>
+
+    </p>
   <% }); %>
 
   <p><BLOCKQUOTE><a href = '/urls/new'><input id="Enter New URL" type="button" value="New URL" onclick="/urls/new" /></a></BLOCKQUOTE></p>
