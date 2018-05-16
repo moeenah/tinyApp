@@ -3,10 +3,12 @@
   <% include ./partials/_header.ejs %>
 </head>
 <body>
-  <h2>Example</h2>
+  <h2>Your Tiny URLs:</h2>
+
   <% Object.keys(urls).forEach(function(keys) { %>
-    <li><%= urls[keys] %></li>
-    <a href = "Enter_Path_Here">Shorten URL</a>
+    <BLOCKQUOTE><p><a href = <%= urls[keys]%>>tinyApp.ca/<%= keys %></a>&#32;&#40;<%= urls[keys] %>&#41;&#32;<a href = '/urls/new'><input id="Edit URL" type="button" value="Edit" onclick="/urls/new" /></a><a href = '/urls/new'><input id="Delete URL" type="button" value="Delete" onclick="/urls/new" /></a></p></BLOCKQUOTE>
   <% }); %>
+
+  <p><BLOCKQUOTE><a href = '/urls/new'><input id="Enter New URL" type="button" value="New URL" onclick="/urls/new" /></a></BLOCKQUOTE></p>
 </body>
 </html>

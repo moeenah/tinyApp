@@ -16,8 +16,7 @@ let urlDatabase = {
 
 //page containing links to manually shorten URLs
 app.get('/urls', (req, res) => {
-  let templateVars = { urls: urlDatabase };
-  console.log(templateVars);
+  let templateVars = { urls: urlDatabase};
   res.render('urls_index', templateVars);
 });
 
@@ -55,8 +54,12 @@ app.get("/u/:shortURL", (req, res) => {
 
 //POSTS to /urls
 app.post("/urls", (req, res) => {
-  console.log(req.body);  // debug statement to see POST parameters
-  res.send("Ok");
+    // debug statement to see POST parameters
+  //urlDatabase['h'] = req.body;
+  let random = generateRandomString();
+  urlDatabase[random] = req.body.longURL;
+  console.log(urlDatabase);
+  res.redirect(`/urls/${random}`);
 });
 
 //listens to specified port
@@ -80,6 +83,7 @@ function generateRandomString() {
   }
 
   //return console.log(char + "\n" + random);
+  return char;
 
 }
 //generateRandomString();
