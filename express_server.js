@@ -17,6 +17,7 @@ let urlDatabase = {
 //page containing links to manually shorten URLs
 app.get('/urls', (req, res) => {
   let templateVars = { urls: urlDatabase };
+  console.log(templateVars);
   res.render('urls_index', templateVars);
 });
 
@@ -27,8 +28,9 @@ app.get("/urls/new", (req, res) => {
 
 //
 app.get('/urls/:id', (req, res) => {
-  let templateVars = { shortURL: req.params.id };
-  res.render('urls_show', templateVars);
+  let originalURL = { long: urlDatabase[req.params.id],
+                      short: req.params.id };
+  res.render('urls_show', originalURL);
 })
 
 //home page
