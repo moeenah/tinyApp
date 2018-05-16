@@ -5,7 +5,7 @@ let PORT = process.env.PORT || 8080; // default port 8080
 
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
-
+app.use(cookieParser())
 //sets engine as ejs
 app.set("view engine", "ejs");
 
@@ -17,19 +17,22 @@ let urlDatabase = {
 
 //page containing links to manually shorten URLs
 app.get('/urls', (req, res) => {
-  let templateVars = { urls: urlDatabase};
+  let templateVars = { urls: urlDatabase,
+                        username: req.cookies["username"]};
   res.render('urls_index', templateVars);
 });
 
 //displays entry field for URLs
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  let templateVars = {username: req.cookies["username"]};
+  res.render("urls_new", templateVars);
 });
 
 //
 app.get('/urls/:id', (req, res) => {
   let originalURL = { long: urlDatabase[req.params.id],
-                      short: req.params.id };
+                      short: req.params.id,
+                      username: req.cookies["username"] };
   res.render('urls_show', originalURL);
 })
 
@@ -81,8 +84,9 @@ app.post("/urls/:id/edit", (req, res) => {
 app.post("/login", (req, res) => {
     // debug statement to see POST parameters
   //console.log(req.body.longURL);
-  console.log(req.body.username);
-  res.cookie(req.body.username);
+
+  res.cookie('username', req.body.username);
+  console.log(req.body);
   res.redirect(`/urls`);
 
 });
