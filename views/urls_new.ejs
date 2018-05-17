@@ -3,11 +3,18 @@
     <title>TinyApp</title>
     <% include ./partials/_header.ejs %>
   </head>
-  <body style="font-size:20px; padding:50px;">
-    <form action="/urls" method="POST" style="margin:150px;">
-      <label for="longURL">Enter a URL:</label>
-      <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 300px">
-      <input type="submit" value="Tinyfi">
-    </form>
-  </body>
+  <% if( user_id !== undefined){ %>
+    <body style="font-size:20px; padding:50px;">
+        <form action="/urls" method="POST" style="margin:150px;">
+          <label for="longURL">Enter a URL:</label>
+          <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 300px">
+          <input type="submit" value="Tinyfi">
+        </form><BLOCKQUOTE><a href = '/urls/'><input id="Home" type="button" value="Home" onclick="/urls" /></a></BLOCKQUOTE>
+      </body>
+  <% } else { %>
+    <body style="font-size:20px; padding:50px;">
+     <p>Please log in</p><a href = '/urls/'><input id="Home" type="button" value="Home" onclick="/urls" /></a>
+    </body>
+  <% } %>
+
 </html>
