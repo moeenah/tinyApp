@@ -15,6 +15,19 @@ let urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = {
+  "userRandomID": {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk"
+  }
+}
+
 //page containing links to manually shorten URLs
 app.get('/urls', (req, res) => {
   let templateVars = { urls: urlDatabase,
@@ -54,6 +67,46 @@ app.get('/hello', (req, res) => {
 app.get("/u/:shortURL", (req, res) => {
   let longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
+});
+
+app.get("/register", (req, res) => {
+
+  res.render('urls_register');
+});
+
+app.post("/register", (req, res) => {
+
+  if (req.body.email === '' || req.body.password === '') {
+    console.log(req.body);
+    res.send('error 400 (please enter BOTH an email and password to register)');
+  }
+
+
+
+  else {
+
+  let arrEmail = [];
+  let arrID = Object.keys(users);
+  arrID.forEach(function(element) {
+    arrEmail.push((users[element].email));
+  });
+  console.log(arrEmail);
+
+    if (arrEmail.includes(req.body.email)) {
+      res.send('error 400 (email already registered)');
+    }
+
+    else {
+     let random = generateRandomString();
+      users[random] = {};
+      users[random]['id'] = random;
+      users[random]['email'] = req.body.email;
+      users[random]['password'] = req.body.password;
+
+      res.cookie('user_id', random);
+      res.redirect('/urls');
+    }
+  }
 });
 
 //POSTS to /urls
