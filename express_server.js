@@ -31,13 +31,13 @@ const users = {
 //page containing links to manually shorten URLs
 app.get('/urls', (req, res) => {
   let templateVars = { urls: urlDatabase,
-                        username: req.cookies["username"]};
+                        username: users[req.cookies['user_id']] };
   res.render('urls_index', templateVars);
 });
 
 //displays entry field for URLs
 app.get("/urls/new", (req, res) => {
-  let templateVars = {username: req.cookies["username"]};
+  let templateVars = {username: users[req.cookies['user_id']] };
   res.render("urls_new", templateVars);
 });
 
@@ -45,7 +45,7 @@ app.get("/urls/new", (req, res) => {
 app.get('/urls/:id', (req, res) => {
   let originalURL = { long: urlDatabase[req.params.id],
                       short: req.params.id,
-                      username: req.cookies["username"] };
+                      username: users[req.cookies['user_id']] };
   res.render('urls_show', originalURL);
 })
 
@@ -74,14 +74,22 @@ app.get("/register", (req, res) => {
   res.render('urls_register');
 });
 
+app.get("/login", (req, res) => {
+
+  res.render('urls_login');
+});
+
+app.post("/login", (req, res) => {
+  console.log(req.body);
+  res.redirect('/urls');
+});
+
 app.post("/register", (req, res) => {
 
   if (req.body.email === '' || req.body.password === '') {
     console.log(req.body);
     res.send('error 400 (please enter BOTH an email and password to register)');
   }
-
-
 
   else {
 

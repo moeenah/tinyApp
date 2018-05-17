@@ -1,11 +1,8 @@
-<% if( username !== undefined){ %>
-<form  method="POST" action="/logout">
-  Username: <%= username %>&#32;<input type="submit" value="LogOut">
-</form>
-<% } else{ %>
-<form  method="POST" action="/login">
-  <label for="username">Username: </label>
-  <input id="username" type="text" name="username" style="width: 300px">&#32;
-  <input type="submit" value="LogIn">
-</form>
-<% } %>
+
+<form action="/login" method="POST" style="margin:150px;">
+      <label for="email">Email:</label>
+      <input id="email" type="email" name="email" style="width: 300px">
+      <label for="password">Password:</label>
+      <input id="password" type="password" name="password" style="width: 300px">
+      <input type="submit" value="Login">
+    </form>
