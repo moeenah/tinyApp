@@ -8,7 +8,7 @@
 
   <% Object.keys(urls).forEach(function(keys) { %>
     <p>
-      <a href = <%= urls[keys]%>>tiny.gov/<%= keys %></a>&#32;&#40;<%= urls[keys] %>&#41;
+      <a href = <%= urls[keys]['url'] %>>tiny.gov/<%= keys %></a>&#32;&#40;<%= urls[keys]['url'] %>&#41;
 
       <a href = '/urls/<%= keys %>'><input id="Edit URL" type="submit" value="Edit"/></a>
 

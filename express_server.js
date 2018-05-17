@@ -11,8 +11,13 @@ app.set("view engine", "ejs");
 
 //pre-made url database assigned to a random alphanumeric string
 let urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2": {id: "b2xVn2",
+              url: "http://www.lighthouselabs.ca",
+              userID: "userRandomID"},
+
+  "9sm5xK": {id: "9sm5xK",
+              url: "http://www.google.com",
+              userID: "user2RandomID"}
 };
 
 //directory of users
@@ -48,7 +53,7 @@ app.get("/urls/new", (req, res) => {
 
 //sends originalURL object to shortened URL page and shows the page
 app.get('/urls/:id', (req, res) => {
-  let originalURL = { long: urlDatabase[req.params.id],
+  let originalURL = { long: urlDatabase[req.params.id]['url'],
                       short: req.params.id,
                       user_id: req.cookies.user_id,
                       users: users };
@@ -72,7 +77,7 @@ app.get('/hello', (req, res) => {
 
 //redirects to longURL for shortURL page
 app.get("/u/:shortURL", (req, res) => {
-  let longURL = urlDatabase[req.params.shortURL];
+  let longURL = urlDatabase[req.params.shortURL]['url'];
   res.redirect(longURL);
 });
 
@@ -89,7 +94,7 @@ app.get("/login", (req, res) => {
 
 //checks if email and pass match ones in users object and checks if fields are empty
 app.post("/login", (req, res) => {
-  console.log(req.body.email);
+  //console.log(req.body.email);
 
   if (req.body.email === '' || req.body.password === '') {
     console.log(req.body);
@@ -124,14 +129,14 @@ app.post("/login", (req, res) => {
   else {
 
   let userKeys = Object.keys(users);
-  console.log(userKeys);
+  //console.log(userKeys);
   let id = '';
   userKeys.forEach(function(element) {
     if (users[element]['email'] === req.body.email) {
       id = element;
     }
   });
-  console.log(id);
+  //console.log(id);
   res.cookie('user_id', id);
     res.redirect('/urls');
   }
@@ -142,7 +147,7 @@ app.post("/login", (req, res) => {
 app.post("/register", (req, res) => {
 
   if (req.body.email === '' || req.body.password === '') {
-    console.log(req.body);
+    //console.log(req.body);
     //add alert to error
     res.sendStatus(400);
   }
@@ -180,7 +185,11 @@ app.post("/urls", (req, res) => {
     // debug statement to see POST parameters
   //urlDatabase['h'] = req.body;
   let random = generateRandomString();
-  urlDatabase[random] = req.body.longURL;
+  urlDatabase[random] = {}
+  urlDatabase[random]['id'] = random;
+  urlDatabase[random]['url'] = req.body.longURL;
+  urlDatabase[random]['userID'] = req.cookies.user_id;
+  console.log(urlDatabase);
   //console.log(urlDatabase);
   res.redirect(`/urls`);
 });
@@ -195,7 +204,7 @@ app.post("/urls/:id/delete", (req, res) => {
 app.post("/urls/:id/edit", (req, res) => {
     // debug statement to see POST parameters
   //console.log(req.body.longURL);
-  urlDatabase[req.params.id] = req.body.longURL;
+  urlDatabase[req.params.id]['url'] = req.body.longURL;
   res.redirect(`/urls`);
 
 });
