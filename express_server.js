@@ -31,13 +31,17 @@ const users = {
 //page containing links to manually shorten URLs
 app.get('/urls', (req, res) => {
   let templateVars = { urls: urlDatabase,
-                        username: users[req.cookies['user_id']] };
+                        user_id: req.cookies.user_id,
+                        users: users };
+  //console.log(req.cookies.user_id);
+
   res.render('urls_index', templateVars);
 });
 
 //displays entry field for URLs
 app.get("/urls/new", (req, res) => {
-  let templateVars = {username: users[req.cookies['user_id']] };
+  let templateVars = {user_id: req.cookies.user_id,
+                      users: users };
   res.render("urls_new", templateVars);
 });
 
@@ -45,7 +49,8 @@ app.get("/urls/new", (req, res) => {
 app.get('/urls/:id', (req, res) => {
   let originalURL = { long: urlDatabase[req.params.id],
                       short: req.params.id,
-                      username: users[req.cookies['user_id']] };
+                      user_id: req.cookies.user_id,
+                      users: users };
   res.render('urls_show', originalURL);
 })
 
@@ -75,20 +80,62 @@ app.get("/register", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-
   res.render('urls_login');
 });
 
 app.post("/login", (req, res) => {
-  console.log(req.body);
-  res.redirect('/urls');
+  console.log(req.body.email);
+
+  if (req.body.email === '' || req.body.password === '') {
+    console.log(req.body);
+    res.status(403).send('please enter an email AND a password to login');
+  }
+
+  else {
+
+
+  let arrID = Object.keys(users);
+
+  let arrEmail = [];
+  arrID.forEach(function(element) {
+    arrEmail.push((users[element].email));
+  });
+  //console.log(arrEmail);
+
+  let arrPassword = [];
+  arrID.forEach(function(element) {
+    arrPassword.push((users[element].password));
+  });
+  //console.log(arrPassword);
+
+  if (arrEmail.includes(req.body.email) === false) {
+          res.status(403).send('email incorrect, try again');
+  }
+  else if (arrPassword.includes(req.body.password) === false) {
+    res.status(403).send('password incorrect, try again');
+  }
+  else {
+
+  let userKeys = Object.keys(users);
+  console.log(userKeys);
+  let id = '';
+  userKeys.forEach(function(element) {
+    if (users[element]['email'] === req.body.email) {
+      id = element;
+    }
+  });
+  console.log(id);
+  res.cookie('user_id', id);
+    res.redirect('/urls');
+  }
+}
 });
 
 app.post("/register", (req, res) => {
 
   if (req.body.email === '' || req.body.password === '') {
     console.log(req.body);
-    res.send('error 400 (please enter BOTH an email and password to register)');
+    res.status(400).send('please enter an email AND a password to register');
   }
 
   else {
@@ -101,7 +148,7 @@ app.post("/register", (req, res) => {
   console.log(arrEmail);
 
     if (arrEmail.includes(req.body.email)) {
-      res.send('error 400 (email already registered)');
+      res.status(400).send('email already registered');
     }
 
     else {
@@ -112,6 +159,7 @@ app.post("/register", (req, res) => {
       users[random]['password'] = req.body.password;
 
       res.cookie('user_id', random);
+      console.log(users);
       res.redirect('/urls');
     }
   }
@@ -142,21 +190,11 @@ app.post("/urls/:id/edit", (req, res) => {
 
 });
 
-app.post("/login", (req, res) => {
-    // debug statement to see POST parameters
-  //console.log(req.body.longURL);
-
-  res.cookie('username', req.body.username);
-  console.log(req.body);
-  res.redirect(`/urls`);
-
-});
-
 app.post("/logout", (req, res) => {
     // debug statement to see POST parameters
   //console.log(req.body.longURL);
 
-  res.clearCookie('username');
+  res.clearCookie('user_id');
   console.log(req.body);
   res.redirect(`/urls`);
 

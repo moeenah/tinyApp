@@ -1,8 +1,9 @@
-
-<form action="/login" method="POST" style="margin:150px;">
-      <label for="email">Email:</label>
-      <input id="email" type="email" name="email" style="width: 300px">
-      <label for="password">Password:</label>
-      <input id="password" type="password" name="password" style="width: 300px">
-      <input type="submit" value="Login">
-    </form>
+<% if( user_id !== undefined){ %>
+<form  method="POST" action="/logout">
+  Username: <%= users[user_id]['email'] %>&#32;<input type="submit" value="LogOut">
+</form>
+<% } else { %>
+  <p><% user_id %></p>
+  <a href = '/login''><input id="login" type="submit" value="Login"/></a>
+  <a href = '/register''><input id="register" type="submit" value="Register"/></a>
+<% } %>
