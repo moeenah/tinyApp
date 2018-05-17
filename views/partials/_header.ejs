@@ -1,9 +1,11 @@
-<% if( user_id !== undefined){ %>
-<form  method="POST" action="/logout">
-  Username: <%= users[user_id]['email'] %>&#32;<input type="submit" value="LogOut">
-</form>
-<% } else { %>
-  <p><% user_id %></p>
+<% if( user_id === undefined){ %>
+
+ <p><% user_id %></p>
   <a href = '/login''><input id="login" type="submit" value="Login"/></a>
   <a href = '/register''><input id="register" type="submit" value="Register"/></a>
+<% } else { %>
+
+  <form  method="POST" action="/logout">
+  Username: <%= users[user_id]['email'] %> &#32;<input type="submit" value="LogOut">
+</form>
 <% } %>

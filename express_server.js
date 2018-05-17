@@ -40,7 +40,8 @@ app.get('/urls', (req, res) => {
                         user_id: req.cookies.user_id,
                         users: users };
   //console.log(req.cookies.user_id);
-
+  console.log(req.cookies.user_id);
+  console.log(users);
   res.render('urls_index', templateVars);
 });
 
@@ -197,15 +198,29 @@ app.post("/urls", (req, res) => {
 app.post("/urls/:id/delete", (req, res) => {
     // debug statement to see POST parameters
   //console.log(req.params.id);
-  delete urlDatabase[req.params.id];
-  res.redirect('/urls');
+  let user_id = req.cookies.user_id;
+  if (user_id !== urlDatabase[req.params.id]['userID']) {
+    res.sendStatus(403);
+  }
+  else {
+    delete urlDatabase[req.params.id];
+    res.redirect('/urls');
+  }
 });
 
 app.post("/urls/:id/edit", (req, res) => {
     // debug statement to see POST parameters
   //console.log(req.body.longURL);
-  urlDatabase[req.params.id]['url'] = req.body.longURL;
-  res.redirect(`/urls`);
+  let user_id = req.cookies.user_id;
+  console.log(user_id);
+  console.log(req.params.id);
+  if (user_id !== urlDatabase[req.params.id]['userID']) {
+    res.sendStatus(403);
+  }
+  else {
+    urlDatabase[req.params.id]['url'] = req.body.longURL;
+    res.redirect('/urls');
+  }
 
 });
 
