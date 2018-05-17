@@ -15,6 +15,7 @@ let urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+//directory of users
 const users = {
   "userRandomID": {
     id: "userRandomID",
@@ -28,7 +29,7 @@ const users = {
   }
 }
 
-//page containing links to manually shorten URLs
+//home page containing all info
 app.get('/urls', (req, res) => {
   let templateVars = { urls: urlDatabase,
                         user_id: req.cookies.user_id,
@@ -38,14 +39,14 @@ app.get('/urls', (req, res) => {
   res.render('urls_index', templateVars);
 });
 
-//displays entry field for URLs
+//displays entry field for new URLs
 app.get("/urls/new", (req, res) => {
   let templateVars = {user_id: req.cookies.user_id,
                       users: users };
   res.render("urls_new", templateVars);
 });
 
-//
+//sends originalURL object to shortened URL page and shows the page
 app.get('/urls/:id', (req, res) => {
   let originalURL = { long: urlDatabase[req.params.id],
                       short: req.params.id,
@@ -69,26 +70,30 @@ app.get('/hello', (req, res) => {
   res.end("<html><body>Hello <b>World</b></body></html>\n");
 });
 
+//redirects to longURL for shortURL page
 app.get("/u/:shortURL", (req, res) => {
   let longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
 });
 
+//renders register page
 app.get("/register", (req, res) => {
 
   res.render('urls_register');
 });
 
+//renders login page
 app.get("/login", (req, res) => {
   res.render('urls_login');
 });
 
+//checks if email and pass match ones in users object and checks if fields are empty
 app.post("/login", (req, res) => {
   console.log(req.body.email);
 
   if (req.body.email === '' || req.body.password === '') {
     console.log(req.body);
-    res.status(403).send('please enter an email AND a password to login');
+    res.sendStatus(403);
   }
 
   else {
@@ -109,10 +114,12 @@ app.post("/login", (req, res) => {
   //console.log(arrPassword);
 
   if (arrEmail.includes(req.body.email) === false) {
-          res.status(403).send('email incorrect, try again');
+    //add alert to error
+        res.sendStatus(403);
   }
   else if (arrPassword.includes(req.body.password) === false) {
-    res.status(403).send('password incorrect, try again');
+    //add alert to error
+        res.sendStatus(403);
   }
   else {
 
@@ -131,37 +138,40 @@ app.post("/login", (req, res) => {
 }
 });
 
+//checks if email already exists and checks if field is empty
 app.post("/register", (req, res) => {
 
   if (req.body.email === '' || req.body.password === '') {
     console.log(req.body);
-    res.status(400).send('please enter an email AND a password to register');
+    //add alert to error
+    res.sendStatus(400);
   }
 
   else {
 
-  let arrEmail = [];
-  let arrID = Object.keys(users);
-  arrID.forEach(function(element) {
-    arrEmail.push((users[element].email));
-  });
-  console.log(arrEmail);
+    let arrEmail = [];
+    let arrID = Object.keys(users);
+    arrID.forEach(function(element) {
+      arrEmail.push((users[element].email));
+    });
+    console.log(arrEmail);
 
-    if (arrEmail.includes(req.body.email)) {
-      res.status(400).send('email already registered');
-    }
+      if (arrEmail.includes(req.body.email)) {
+        //add alert to error
+            res.sendStatus(400);
+      }
 
-    else {
-     let random = generateRandomString();
-      users[random] = {};
-      users[random]['id'] = random;
-      users[random]['email'] = req.body.email;
-      users[random]['password'] = req.body.password;
+      else {
+       let random = generateRandomString();
+        users[random] = {};
+        users[random]['id'] = random;
+        users[random]['email'] = req.body.email;
+        users[random]['password'] = req.body.password;
 
-      res.cookie('user_id', random);
-      console.log(users);
-      res.redirect('/urls');
-    }
+        res.cookie('user_id', random);
+        console.log(users);
+        res.redirect('/urls');
+      }
   }
 });
 
