@@ -1,6 +1,7 @@
 let express = require("express");
 
-let cookieParser = require('cookie-parser');
+//let cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
 
 const bodyParser = require("body-parser");
 
@@ -14,7 +15,14 @@ const salt = bcrypt.genSaltSync(10);
 
 app.use(bodyParser.urlencoded({extended: true}));
 
-app.use(cookieParser());
+//app.use(cookieParser());
+
+app.use(cookieSession({
+  name: 'session',
+  keys: [bcrypt.hashSync("key", salt)],
+  // Cookie Options
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}));
 
 app.set("view engine", "ejs");
 
@@ -74,8 +82,8 @@ app.get('/urls', (req, res) => {
 
   //let stuff = urlsForUser(req.cookies.user_id, urlDatabase);
   // console.log(stuff);
-    let templateVars = { urls: urlsForUser(req.cookies.user_id, urlDatabase),
-                      user_id: req.cookies.user_id,
+    let templateVars = { urls: urlsForUser(req.session.user_id),
+                      user_id: req.session.user_id,
                       users: users };
   // console.log(req.cookies.user_id);
   // console.log(users);
@@ -85,7 +93,7 @@ app.get('/urls', (req, res) => {
 
 //displays entry field for new URLs
 app.get("/urls/new", (req, res) => {
-  let templateVars = {user_id: req.cookies.user_id,
+  let templateVars = {user_id: req.session.user_id,
                       users: users };
   res.render("urls_new", templateVars);
 });
@@ -94,7 +102,7 @@ app.get("/urls/new", (req, res) => {
 app.get('/urls/:id', (req, res) => {
   let originalURL = { long: urlDatabase[req.params.id]['url'],
                       short: req.params.id,
-                      user_id: req.cookies.user_id,
+                      user_id: req.session.user_id,
                       users: users,
                       userID: urlDatabase[req.params.id]['userID'], };
 
@@ -180,7 +188,7 @@ app.post("/login", (req, res) => {
     }
   });
   //console.log(id);
-  res.cookie('user_id', id);
+  req.session.user_id = id;
     res.redirect('/urls');
   }
 
@@ -216,7 +224,7 @@ app.post("/register", (req, res) => {
         users[random]['email'] = req.body.email;
         users[random]['password'] = bcrypt.hashSync(req.body.password, salt);
 
-        res.cookie('user_id', random);
+        req.session.user_id = random;
         //console.log(users);
         res.redirect('/urls');
       }
@@ -231,7 +239,7 @@ app.post("/urls", (req, res) => {
   urlDatabase[random] = {}
   urlDatabase[random]['id'] = random;
   urlDatabase[random]['url'] = req.body.longURL;
-  urlDatabase[random]['userID'] = req.cookies.user_id;
+  urlDatabase[random]['userID'] = req.session.user_id;
   console.log(urlDatabase);
   //console.log(urlDatabase);
   res.redirect(`/urls`);
@@ -239,8 +247,8 @@ app.post("/urls", (req, res) => {
 
 app.post("/urls/:id/delete", (req, res) => {
     // debug statement to see POST parameters
-  //console.log(req.params.id);
-  let user_id = req.cookies.user_id;
+  console.log(req.params.id);
+  let user_id = req.session.user_id;
   if (user_id !== urlDatabase[req.params.id]['userID']) {
     res.sendStatus(403);
   }
@@ -253,7 +261,7 @@ app.post("/urls/:id/delete", (req, res) => {
 app.post("/urls/:id/edit", (req, res) => {
     // debug statement to see POST parameters
   //console.log(req.body.longURL);
-  let user_id = req.cookies.user_id;
+  let user_id = req.session.user_id;
   console.log(user_id);
   console.log(req.params.id);
   if (user_id !== urlDatabase[req.params.id]['userID']) {
@@ -270,7 +278,8 @@ app.post("/logout", (req, res) => {
     // debug statement to see POST parameters
   //console.log(req.body.longURL);
 
-  res.clearCookie('user_id');
+  //res.clearCookie('user_id');
+  req.session.user_id = undefined;
   res.redirect(`/urls`);
 
 });
