@@ -1,12 +1,21 @@
 let express = require("express");
+
 let cookieParser = require('cookie-parser');
-let app = express();
-let PORT = process.env.PORT || 8080; // default port 8080
 
 const bodyParser = require("body-parser");
+
+const bcrypt = require('bcryptjs');
+
+let app = express();
+
+let PORT = process.env.PORT || 8080;
+
+const salt = bcrypt.genSaltSync(10);
+
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookieParser())
-//sets engine as ejs
+
+app.use(cookieParser());
+
 app.set("view engine", "ejs");
 
 //pre-made url database assigned to a random alphanumeric string
@@ -25,14 +34,14 @@ const users = {
   "userRandomID": {
     id: "userRandomID",
     email: "user@example.com",
-    password: "purple-monkey-dinosaur"
+    password: bcrypt.hashSync("purple-monkey-dinosaur", salt)
   },
  "user2RandomID": {
     id: "user2RandomID",
     email: "user2@example.com",
-    password: "dishwasher-funk"
+    password: bcrypt.hashSync("dishwasher-funk", salt)
   }
-}
+};
 
 function urlsForUser(id) {
   let userArr = [];
@@ -48,6 +57,18 @@ function urlsForUser(id) {
 
 }
 
+function passWord(email) {
+  let userIdArr = Object.keys(users);
+  let result = '';
+  userIdArr.forEach(function(userID) {
+    if (users[userID].email === email) {
+      result = users[userID].password;
+    }
+  });
+
+  return result;
+}
+
 //home page containing all info
 app.get('/urls', (req, res) => {
 
@@ -58,7 +79,7 @@ app.get('/urls', (req, res) => {
                       users: users };
   // console.log(req.cookies.user_id);
   // console.log(users);
-  console.log(urlDatabase);
+  //console.log(urlDatabase);
   res.render('urls_index', templateVars);
 });
 
@@ -118,11 +139,11 @@ app.post("/login", (req, res) => {
   //console.log(req.body.email);
 
   if (req.body.email === '' || req.body.password === '') {
-    console.log(req.body);
+    //console.log(req.body);
     res.sendStatus(403);
   }
 
-  else {
+
 
 
   let arrID = Object.keys(users);
@@ -143,8 +164,9 @@ app.post("/login", (req, res) => {
     //add alert to error
         res.sendStatus(403);
   }
-  else if (arrPassword.includes(req.body.password) === false) {
-    //add alert to error
+
+  else if (bcrypt.compareSync(req.body.password, passWord(req.body.email)) === false) {
+
         res.sendStatus(403);
   }
   else {
@@ -161,7 +183,7 @@ app.post("/login", (req, res) => {
   res.cookie('user_id', id);
     res.redirect('/urls');
   }
-}
+
 });
 
 //checks if email already exists and checks if field is empty
@@ -180,7 +202,7 @@ app.post("/register", (req, res) => {
     arrID.forEach(function(element) {
       arrEmail.push((users[element].email));
     });
-    console.log(arrEmail);
+    //console.log(arrEmail);
 
       if (arrEmail.includes(req.body.email)) {
         //add alert to error
@@ -192,10 +214,10 @@ app.post("/register", (req, res) => {
         users[random] = {};
         users[random]['id'] = random;
         users[random]['email'] = req.body.email;
-        users[random]['password'] = req.body.password;
+        users[random]['password'] = bcrypt.hashSync(req.body.password, salt);
 
         res.cookie('user_id', random);
-        console.log(users);
+        //console.log(users);
         res.redirect('/urls');
       }
   }
@@ -249,7 +271,6 @@ app.post("/logout", (req, res) => {
   //console.log(req.body.longURL);
 
   res.clearCookie('user_id');
-  console.log(req.body);
   res.redirect(`/urls`);
 
 });
