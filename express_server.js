@@ -34,14 +34,31 @@ const users = {
   }
 }
 
+function urlsForUser(id) {
+  let userArr = [];
+  let UrlID = Object.keys(urlDatabase);
+
+  UrlID.forEach(function(element) {
+    if (urlDatabase[element]['userID'] === id) {
+    userArr.push(urlDatabase[element]);
+    }
+  });
+
+  return userArr;
+
+}
+
 //home page containing all info
 app.get('/urls', (req, res) => {
-  let templateVars = { urls: urlDatabase,
-                        user_id: req.cookies.user_id,
-                        users: users };
-  //console.log(req.cookies.user_id);
-  console.log(req.cookies.user_id);
-  console.log(users);
+
+  //let stuff = urlsForUser(req.cookies.user_id, urlDatabase);
+  // console.log(stuff);
+    let templateVars = { urls: urlsForUser(req.cookies.user_id, urlDatabase),
+                      user_id: req.cookies.user_id,
+                      users: users };
+  // console.log(req.cookies.user_id);
+  // console.log(users);
+  console.log(urlDatabase);
   res.render('urls_index', templateVars);
 });
 
@@ -57,7 +74,10 @@ app.get('/urls/:id', (req, res) => {
   let originalURL = { long: urlDatabase[req.params.id]['url'],
                       short: req.params.id,
                       user_id: req.cookies.user_id,
-                      users: users };
+                      users: users,
+                      userID: urlDatabase[req.params.id]['userID'], };
+
+console.log(originalURL);
   res.render('urls_show', originalURL);
 })
 

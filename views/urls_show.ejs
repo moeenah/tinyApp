@@ -4,6 +4,7 @@
   <% include ./partials/_header.ejs %>
 </head>
 <body>
+  <% if( user_id !== undefined && user_id === userID){ %>
   <h2>Your Tiny URL</h2>
     <p>Original URL: <%= long %></p>
     <BLOCKQUOTE><form action="/urls/<%= short %>/edit" method="POST">
@@ -13,5 +14,14 @@
     </form></BLOCKQUOTE>
     <p>Shortened URL: <a href = <%=long%>>tinyApp.ca/<%= short %></a></p>
       <a href = '/urls/'><input id="Home" type="button" value="Home" onclick="/urls" /></a>
+      <% } else if (user_id !== userID) { %>
+      <body style="font-size:20px; padding:50px;">
+     <p>You do not have access to this TinyURL</p><a href = '/urls/'><input id="Home" type="button" value="Home" onclick="/urls" /></a>
+    </body>
+      <% } else { %>
+    <body style="font-size:20px; padding:50px;">
+     <p>Please log in</p><a href = '/urls/'><input id="Home" type="button" value="Home" onclick="/urls" /></a>
+    </body>
+  <% } %>
 </body>
 </html>

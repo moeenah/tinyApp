@@ -6,17 +6,21 @@
 <body>
   <h2>Your Tiny URLs:</h2>
 
-  <% Object.keys(urls).forEach(function(keys) { %>
+  <% if( user_id === undefined){ %>
+    <p>Please login to view your TinyURLs</p>
+  <% } else { %>
+  <% urls.forEach(function(key) { %>
     <p>
-      <a href = <%= urls[keys]['url'] %>>tiny.gov/<%= keys %></a>&#32;&#40;<%= urls[keys]['url'] %>&#41;
+      <a href = <%= key.url %>>tiny.gov/<%= key.id %></a>&#32;&#40;<%= key.url %>&#41;
 
-      <a href = '/urls/<%= keys %>'><input id="Edit URL" type="submit" value="Edit"/></a>
+      <a href = '/urls/<%= key.id %>'><input id="Edit URL" type="submit" value="Edit"/></a>
 
-      <form  method="POST" action="/urls/<%= keys %>/delete"><input id="Delete URL" type="submit" value="Delete"/></form>
+      <form  method="POST" action="/urls/<%= key.url %>/delete"><input id="Delete URL" type="submit" value="Delete"/></form>
 
     </p>
   <% }); %>
-
   <p><BLOCKQUOTE><a href = '/urls/new'><input id="Enter New URL" type="button" value="New URL" onclick="/urls/new" /></a></BLOCKQUOTE></p>
+  <% } %>
+
 </body>
 </html>
