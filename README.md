@@ -2,7 +2,7 @@
 
 TinyApp is a dope full stack web application built with node
 
-Register an account or login and create a custom tinyURL for any link on the internet
+Register an account or login, and create a custom tinyURL for any link on the internet
 
 ## Final Product
 
