@@ -4,11 +4,11 @@ TinyApp is a dope full stack web application built with node
 
 ## Final Product
 
-!["Screenshot of URLs page"](#)
-!["Screenshot of Login page"](#)
-!["Screenshot of Register page"](#)
-!["Screenshot of Edit page"](#)
-!["Screenshot of Add URL page"](#)
+!["Screenshot of URLs page"](https://github.com/moeenah/tinyApp/blob/master/docs/URLs-page.png)
+!["Screenshot of Login page"](https://github.com/moeenah/tinyApp/blob/master/docs/Login-page.png)
+!["Screenshot of Register page"](https://github.com/moeenah/tinyApp/blob/master/docs/Register-page.png)
+!["Screenshot of Edit page"](https://github.com/moeenah/tinyApp/blob/master/docs/EditURL-page.png)
+!["Screenshot of Add URL page"](https://github.com/moeenah/tinyApp/blob/master/docs/AddNewURL-page.png)
 
 # Dependencies
 
