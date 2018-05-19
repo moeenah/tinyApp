@@ -2,6 +2,8 @@
 
 TinyApp is a dope full stack web application built with node
 
+Register an account or login and create a tinyURL for any link on the internet
+
 ## Final Product
 
 !["Screenshot of URLs page"](https://github.com/moeenah/tinyApp/blob/master/docs/URLs-page.png)
