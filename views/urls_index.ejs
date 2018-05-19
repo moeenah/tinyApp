@@ -3,7 +3,7 @@
   <title>TinyApp</title>
   <% include ./partials/_header.ejs %>
 </head>
-<body>
+<body style="font-size:20px; padding:50px;">
   <h2>Your Tiny URLs:</h2>
 
   <% if( user_id === undefined){ %>
@@ -13,13 +13,13 @@
     <p>
       <a href = <%= key.url %>>tiny.gov/<%= key.id %></a>&#32;&#40;<%= key.url %>&#41;
 
-      <a href = '/urls/<%= key.id %>'><input id="Edit URL" type="submit" value="Edit"/></a>
+      <form method="GET" action='/urls/<%= key.id %>'><input id="Edit URL" type="submit" value="Edit"/></form>
 
       <form  method="POST" action="/urls/<%= key.id %>/delete"><input id="Delete URL" type="submit" value="Delete"/></form>
 
     </p>
   <% }); %>
-  <p><BLOCKQUOTE><a href = '/urls/new'><input id="Enter New URL" type="button" value="New URL" onclick="/urls/new" /></a></BLOCKQUOTE></p>
+  <p><BLOCKQUOTE><form method="GET" action= '/urls/new'><input id="Enter New URL" type="submit" value="Create a New TinyURL"/></form></BLOCKQUOTE></p>
   <% } %>
 
 </body>

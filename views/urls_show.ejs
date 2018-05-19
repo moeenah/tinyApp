@@ -3,24 +3,28 @@
   <title>TinyApp</title>
   <% include ./partials/_header.ejs %>
 </head>
-<body>
+<body style="font-size:20px; padding:50px;">
   <% if( user_id !== undefined && user_id === userID){ %>
-  <h2>Your Tiny URL</h2>
+  <h2>Edit Your Tiny URL</h2>
     <p>Original URL: <%= long %></p>
-    <BLOCKQUOTE><form action="/urls/<%= short %>/edit" method="POST">
-      <label for="longURL">Edit URL:</label>
+    <p>TinyURL: <a href = <%=long%>>tinyApp.gov/<%= short %></a></p>
+    <BLOCKQUOTE><form action="/urls/<%= short %>" method="POST">
+      <label for="longURL">Edit TinyURL:</label>
       <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 300px">
       <input type="submit" value="Submit">
     </form></BLOCKQUOTE>
-    <p>Shortened URL: <a href = <%=long%>>tinyApp.ca/<%= short %></a></p>
-      <a href = '/urls/'><input id="Home" type="button" value="Home" onclick="/urls" /></a>
-      <% } else if (user_id !== userID) { %>
+      <form action='/urls' method='GET'><input id="Home" type="submit" value="Home" onclick="/urls" /></form>
+      <% } else if (user_id !== userID && error !== 'does not exist' && user_id !== undefined) { %>
       <body style="font-size:20px; padding:50px;">
-     <p>You do not have access to this TinyURL</p><a href = '/urls/'><input id="Home" type="button" value="Home" onclick="/urls" /></a>
+     <p>Error 403</p><p>This TinyURL belongs to another user, you cannot edit it</p><form action='/urls' method='GET'><input id="Home" type="submit" value="Home" onclick="/urls" /></form>
     </body>
-      <% } else { %>
+       <% } else if (error === 'does not exist' && user_id !== undefined) { %>
+       <body style="font-size:20px; padding:50px;">
+       <p>This TinyURL does not exist</p><form action='/urls' method='GET'><input id="Home" type="submit" value="Home"/></form>
+     </body>
+      <% } else  { %>
     <body style="font-size:20px; padding:50px;">
-     <p>Please log in</p><a href = '/urls/'><input id="Home" type="button" value="Home" onclick="/urls" /></a>
+     <p>Please log in</p><form action='/urls' method='GET'><input id="Home" type="submit" value="Home" onclick="/urls" /></form>
     </body>
   <% } %>
 </body>
