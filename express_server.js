@@ -54,7 +54,7 @@ function urlsForUser(id) {
   let UrlID = Object.keys(urlDatabase);
 
   UrlID.forEach(function(element) {
-    if (urlDatabase[element]['userID'] === id) {
+    if (urlDatabase[element].userID === id) {
     userArr.push(urlDatabase[element]);
     }
   });
@@ -85,6 +85,7 @@ function generateRandomString() {
   return char;
 }
 
+//handles what happens with localhost:'PORT'/
 app.get('/', (req, res) => {
   if (req.session.user_id === undefined) {
     res.redirect('/login');
@@ -93,7 +94,7 @@ app.get('/', (req, res) => {
   }
 });
 
-//home page containing all info
+//home page containing main info
 app.get('/urls', (req, res) => {
     let templateVars = { urls: urlsForUser(req.session.user_id),
                       user_id: req.session.user_id,
@@ -113,7 +114,7 @@ app.get("/urls/new", (req, res) => {
 }
 });
 
-//sends originalURL object to shortened URL page and shows the page
+//checks if /urls/'id' is valid and displays edit page
 app.get('/urls/:id', (req, res) => {
   if (urlDatabase[req.params.id] === undefined) {
     let templateVars = {error: 'does not exist',
@@ -123,11 +124,11 @@ app.get('/urls/:id', (req, res) => {
                         userID: urlDatabase[req.params.id] };
     res.render('urls_show', templateVars);
   } else {
-    let templateVars = { long: urlDatabase[req.params.id]['url'],
+    let templateVars = { long: urlDatabase[req.params.id].url,
                         short: req.params.id,
                         user_id: req.session.user_id,
                         users: users,
-                        userID: urlDatabase[req.params.id]['userID'],
+                        userID: urlDatabase[req.params.id].userID,
                         error: urlDatabase[req.params.id]};
     res.status(403);
     res.render('urls_show', templateVars);
@@ -139,12 +140,12 @@ app.get("/u/:shortURL", (req, res) => {
    if (urlDatabase[req.params.shortURL] === undefined) {
     res.status(400).send('<html><head><title>TinyAPP</title></head><body style="font-size:20px; padding:50px;"><p>Error 400</p><p>This TinyURL does not exist.</p><form action="/urls" method="GET"><input id="Home" type="submit" value="Home"/></form></body></html>');
   } else {
-    let longURL = urlDatabase[req.params.shortURL]['url'];
+    let longURL = urlDatabase[req.params.shortURL].url;
     res.redirect(longURL);
   }
 });
 
-//renders register page
+//renders register page or redirects to /urls depending on if user is logged in
 app.get("/register", (req, res) => {
   if (req.session.user_id === undefined) {
     res.render('urls_register');
@@ -153,7 +154,7 @@ app.get("/register", (req, res) => {
   }
 });
 
-//renders login page
+//renders login page or redirects to /urls depending on if user is logged in
 app.get("/login", (req, res) => {
   if (req.session.user_id === undefined) {
     res.render('urls_login');
@@ -162,7 +163,7 @@ app.get("/login", (req, res) => {
   }
 });
 
-//checks if email and pass match ones in users object and checks if fields are empty
+//checks if email and pass match, returns error in all other cases
 app.post("/login", (req, res) => {
   if (req.body.email === '' || req.body.password === '') {
     res.status(403).send('<html><head><title>TinyAPP</title></head><body style="font-size:20px; padding:50px;"><p>Error 403</p><p>Please enter both an email and a password.</p><form action="/login" method="GET"><input id="Try again" type="submit" value="Try again"/></form></body></html>');
@@ -189,7 +190,7 @@ app.post("/login", (req, res) => {
     let userKeys = Object.keys(users);
     let id = '';
     userKeys.forEach(function(element) {
-      if (users[element]['email'] === req.body.email) {
+      if (users[element].email === req.body.email) {
         id = element;
       }
     });
@@ -200,7 +201,7 @@ app.post("/login", (req, res) => {
   }
 });
 
-//checks if email already exists and checks if field is empty
+//checks if email already exists, and returns error in all other cases
 app.post("/register", (req, res) => {
   if (req.body.email === '' || req.body.password === '') {
     //returns error message
@@ -219,10 +220,10 @@ app.post("/register", (req, res) => {
             let random = generateRandomString();
             //adds new user to users object
             users[random] = {};
-            users[random]['id'] = random;
-            users[random]['email'] = req.body.email;
+            users[random].id = random;
+            users[random].email = req.body.email;
               //encrypts password with bcrypt
-            users[random]['password'] = bcrypt.hashSync(req.body.password, salt);
+            users[random].password = bcrypt.hashSync(req.body.password, salt);
             //setting cookie
             req.session.user_id = random;
             //redirects to /urls
@@ -231,24 +232,25 @@ app.post("/register", (req, res) => {
   }
 });
 
-//POSTS to /urls
+//allows editing of LongURL assined to a TinyURL
 app.post("/urls", (req, res) => {
   //creates a new tinyURL
   let random = generateRandomString();
-  urlDatabase[random] = {}
-  urlDatabase[random]['id'] = random;
-  urlDatabase[random]['url'] = req.body.longURL;
-  urlDatabase[random]['userID'] = req.session.user_id;
+  urlDatabase[random] = {};
+  urlDatabase[random].id = random;
+  urlDatabase[random].url = req.body.longURL;
+  urlDatabase[random].userID = req.session.user_id;
   //redirects to edit page for new URL
   res.redirect(`/urls/${random}`);
 });
 
+//checks if user is allowed to delete by matching username, if not returns error
 app.post("/urls/:id/delete", (req, res) => {
   let user_id = req.session.user_id;
    if (urlDatabase[req.params.id] === undefined) {
     res.sendStatus(403);
   }
-  else if (user_id !== urlDatabase[req.params.id]['userID']) {
+  else if (user_id !== urlDatabase[req.params.id].userID) {
     res.sendStatus(403);
   }
   else {
@@ -257,19 +259,21 @@ app.post("/urls/:id/delete", (req, res) => {
   }
 });
 
+//checks if user is allwoed to edit by matching username, if not returns error
 app.post("/urls/:id", (req, res) => {
   let user_id = req.session.user_id;
 
   if (urlDatabase[req.params.id] === undefined) {
     res.status(403).send('<html><head><title>TinyAPP</title></head><body style="font-size:20px; padding:50px;"><p>Error 403</p><form action="/urls" method="GET"><input id="Home" type="submit" value="Home"/></form></body></html>');
-  } else if (user_id !== urlDatabase[req.params.id]['userID']) {
+  } else if (user_id !== urlDatabase[req.params.id].userID) {
     res.status(403).send('<html><head><title>TinyAPP</title></head><body style="font-size:20px; padding:50px;"><p>Error 403</p><form action="/urls" method="GET"><input id="Home" type="submit" value="Home"/></form></body></html>');
   } else {
-    urlDatabase[req.params.id]['url'] = req.body.longURL;
+    urlDatabase[req.params.id].url = req.body.longURL;
     res.redirect('/urls');
   }
 });
 
+//redirects logout to /urls
 app.post("/logout", (req, res) => {
   delete req.session.user_id;
   res.redirect(`/urls`);
