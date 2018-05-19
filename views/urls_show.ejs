@@ -11,7 +11,7 @@
     <BLOCKQUOTE><form action="/urls/<%= short %>" method="POST">
       <label for="longURL">Edit TinyURL:</label>
       <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 300px">
-      <input type="submit" value="Submit">
+      <input type="submit" value="Update">
     </form></BLOCKQUOTE>
       <form action='/urls' method='GET'><input id="Home" type="submit" value="Home" onclick="/urls" /></form>
       <% } else if (user_id !== userID && error !== 'does not exist' && user_id !== undefined) { %>

@@ -241,7 +241,7 @@ app.post("/urls", (req, res) => {
   urlDatabase[random].url = req.body.longURL;
   urlDatabase[random].userID = req.session.user_id;
   //redirects to edit page for new URL
-  res.redirect(`/urls/${random}`);
+  res.redirect('/urls');
 });
 
 //checks if user is allowed to delete by matching username, if not returns error
