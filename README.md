@@ -1,6 +1,6 @@
 # TinyApp Project
 
-TinyApp is a dope full stack web application built with node
+TinyApp is a dope full stack web application built with Node and Express
 
 Register an account or login, and create a custom tinyURL for any link on the internet
 
